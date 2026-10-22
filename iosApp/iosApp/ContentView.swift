@@ -7,7 +7,7 @@ struct ContentView: View {
         VStack {
             Button("Click me!") {
                 withAnimation {
-                    showContent = !showContent
+                    showContent.toggle()
                 }
             }
 
