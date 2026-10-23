@@ -52,6 +52,8 @@ class LoginViewModel(
                 Timber.d("Ошибка авторизации: ${ex.cause}")
                 val errorMsg = when (ex) {
                     is AuthNetworkException.InvalidCredentials -> "Неверный email или пароль"
+                    is AuthNetworkException.EmailBoundToYandex ->
+                        "Этот email привязан к Яндексу. Войдите через Яндекс"
                     is AuthNetworkException.InvalidEmailOrPasswordFormat -> "Неверный формат почты или пароля"
                     is AuthUIException.EmptyEmail -> "Почта не может быть пустой"
                     is AuthUIException.InvalidEmailFormat -> "Неверный формат почты"

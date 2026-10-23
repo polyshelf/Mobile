@@ -6,6 +6,7 @@ import com.command.polyshelf.data.storage.DATA_STORE_FILE_NAME
 import com.command.polyshelf.data.storage.createDataStore
 import com.command.polyshelf.presentation.screen.auth.login.LoginViewModel
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationViewModel
+import com.command.polyshelf.presentation.screen.auth.yandex.YandexAuthViewModel
 import com.command.polyshelf.presentation.screen.splash.SplashViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
@@ -20,4 +21,5 @@ val authModule = module {
     viewModelOf(::SplashViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegistrationViewModel)
+    viewModelOf(::YandexAuthViewModel)
 }

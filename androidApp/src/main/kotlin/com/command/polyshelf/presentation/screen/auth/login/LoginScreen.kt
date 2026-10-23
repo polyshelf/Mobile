@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.command.polyshelf.presentation.screen.auth.yandex.YandexAuthSection
 import com.command.polyshelf.presentation.theme.PolyShelfTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,6 +70,7 @@ fun LoginScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onRegisterClick = onRegisterClick,
+        onYandexSuccess = onLoginSuccess,
         modifier = modifier
     )
 }
@@ -78,7 +80,8 @@ fun LoginContent(
     state: LoginState,
     onIntent: (LoginIntent) -> Unit,
     onRegisterClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onYandexSuccess: () -> Unit = {}
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -207,6 +210,13 @@ fun LoginContent(
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        YandexAuthSection(
+                            buttonText = "Войти через Яндекс",
+                            onSuccess = onYandexSuccess
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
