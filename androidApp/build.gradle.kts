@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ApkSigningConfig
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -16,6 +17,9 @@ dependencies {
 
     // Logging
     implementation(libs.timber)
+
+    // Вход через Яндекс
+    implementation(libs.yandex.authsdk)
 
     // DI
     implementation(libs.koin.core)
@@ -52,6 +56,9 @@ android {
 
     defaultConfig {
         applicationId = "com.command.polyshelf"
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = System.getenv("YANDEX_CLIENT_ID")
+            ?: (project.findProperty("YANDEX_CLIENT_ID") as String?)
+            ?: ""
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -62,6 +69,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    fun signingFor(prefix: String): ApkSigningConfig? {
+        val path = System.getenv("${prefix}_KEYSTORE_PATH")
+        return if (path == null) {
+            null
+        } else {
+            signingConfigs.create(prefix.lowercase()) {
+                storeFile = file(path)
+                storePassword = System.getenv("${prefix}_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("${prefix}_KEY_ALIAS")
+                keyPassword = System.getenv("${prefix}_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -69,6 +90,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingFor("RELEASE")
+        }
+        create("preRelease") {
+            initWith(getByName("release"))
+            matchingFallbacks += "release"
+            signingConfig = signingFor("PRE_RELEASE") ?: signingConfigs.getByName("debug")
         }
     }
     compileOptions {

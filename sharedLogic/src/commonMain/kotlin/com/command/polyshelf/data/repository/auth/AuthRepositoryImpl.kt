@@ -2,6 +2,7 @@ package com.command.polyshelf.data.repository.auth
 
 import com.command.polyshelf.data.network.auth.api.AuthApi
 import com.command.polyshelf.data.network.auth.dto.RefreshTokenRequest
+import com.command.polyshelf.data.network.auth.dto.YandexAuthRequest
 import com.command.polyshelf.data.network.auth.exception.AuthNetworkException
 import com.command.polyshelf.data.storage.TokenStorage
 import com.command.polyshelf.domain.auth.mapper.toDto
@@ -37,6 +38,18 @@ class AuthRepositoryImpl(
             )
         }.onFailure { ex ->
             Logger.e("AuthRepositoryImpl", "register() FAILED: ${ex.message}", ex)
+        }
+    }
+
+    override suspend fun loginWithYandex(yandexToken: String, linkPassword: String?): Result<Unit> {
+        Logger.d("AuthRepositoryImpl", "loginWithYandex() started, linking=${linkPassword != null}")
+        return authApi.yandex(YandexAuthRequest(yandexToken, linkPassword)).mapCatching { response ->
+            tokenStorage.saveTokens(
+                accessToken = response.accessToken,
+                refreshToken = response.refreshToken
+            )
+        }.onFailure { ex ->
+            Logger.e("AuthRepositoryImpl", "loginWithYandex() FAILED: ${ex.message}", ex)
         }
     }
 

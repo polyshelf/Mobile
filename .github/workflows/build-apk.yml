@@ -2,6 +2,15 @@ name: Build APK
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Тип сборки (определяет, каким ключом подписывается APK)'
+        required: true
+        type: choice
+        default: pre_release
+        options:
+          - pre_release
+          - release
 
 permissions:
   contents: read
@@ -9,6 +18,8 @@ permissions:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: ${{ inputs.build_type }}
     steps:
       - uses: actions/checkout@v4
 
@@ -19,13 +30,48 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build debug APK
+      - name: Restore keystore
+        env:
+          PRE_RELEASE_KEYSTORE_BASE64: ${{ secrets.PRE_RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          if [ "$BUILD_TYPE" = "release" ]; then
+            PREFIX=RELEASE;     KEYSTORE_B64="$RELEASE_KEYSTORE_BASE64"
+          else
+            PREFIX=PRE_RELEASE; KEYSTORE_B64="$PRE_RELEASE_KEYSTORE_BASE64"
+          fi
+          test -n "$KEYSTORE_B64" || { echo "::error::Секрет с keystore для $PREFIX не задан"; exit 1; }
+          KEYSTORE_PATH="$RUNNER_TEMP/$PREFIX.jks"
+          echo "$KEYSTORE_B64" | base64 -d > "$KEYSTORE_PATH"
+          {
+            echo "${PREFIX}_KEYSTORE_PATH=$KEYSTORE_PATH"
+            echo "SIGNING_PREFIX=$PREFIX"
+          } >> "$GITHUB_ENV"
+
+      - name: Build APK
+        env:
+          PRE_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.PRE_RELEASE_KEYSTORE_PASSWORD }}
+          PRE_RELEASE_KEY_ALIAS: ${{ secrets.PRE_RELEASE_KEY_ALIAS }}
+          PRE_RELEASE_KEY_PASSWORD: ${{ secrets.PRE_RELEASE_KEY_PASSWORD }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          YANDEX_CLIENT_ID: ${{ secrets.YANDEX_CLIENT_ID }}
         run: |
           chmod +x ./gradlew
-          ./gradlew :androidApp:assembleDebug --stacktrace
+          if [ "$BUILD_TYPE" = "release" ]; then TASK=assembleRelease; else TASK=assemblePreRelease; fi
+          ./gradlew ":androidApp:$TASK" --stacktrace
+
+      - name: Show signing SHA-256 (для регистрации в Яндекс ID)
+        run: |
+          APK=$(ls androidApp/build/outputs/apk/*/*.apk | head -n 1)
+          BT=$(ls "$ANDROID_HOME"/build-tools | sort -V | tail -n 1)
+          FP=$("$ANDROID_HOME/build-tools/$BT/apksigner" verify --print-certs "$APK" | grep "SHA-256 digest")
+          echo "$FP"
+          printf '### Подпись APK (%s)\n`%s`\n' "$BUILD_TYPE" "$FP" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: polyshelf-debug-${{ github.run_number }}
-          path: androidApp/build/outputs/apk/debug/*.apk
+          name: polyshelf-${{ inputs.build_type }}-${{ github.run_number }}
+          path: androidApp/build/outputs/apk/*/*.apk
           if-no-files-found: error

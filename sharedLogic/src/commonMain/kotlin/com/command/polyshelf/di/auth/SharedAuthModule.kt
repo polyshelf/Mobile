@@ -9,6 +9,7 @@ import com.command.polyshelf.domain.auth.repository.AuthRepository
 import com.command.polyshelf.domain.auth.usecase.CheckAuthUseCase
 import com.command.polyshelf.domain.auth.usecase.LoginUseCase
 import com.command.polyshelf.domain.auth.usecase.RegisterUseCase
+import com.command.polyshelf.domain.auth.usecase.YandexLoginUseCase
 import org.koin.dsl.module
 
 val sharedAuthModule = module {
@@ -17,5 +18,6 @@ val sharedAuthModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single<LoginUseCase> { LoginUseCase(get()) }
     single<RegisterUseCase> { RegisterUseCase(get()) }
+    single<YandexLoginUseCase> { YandexLoginUseCase(get()) }
     single<CheckAuthUseCase> { CheckAuthUseCase(get()) }
 }

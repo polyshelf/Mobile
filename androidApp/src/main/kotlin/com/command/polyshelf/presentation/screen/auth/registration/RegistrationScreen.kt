@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.command.polyshelf.presentation.screen.auth.yandex.YandexAuthSection
 import com.command.polyshelf.presentation.theme.PolyShelfTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,6 +70,7 @@ fun RegistrationScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onLoginClick = onLoginClick,
+        onYandexSuccess = onRegisterSuccess,
         modifier = modifier
     )
 }
@@ -78,7 +80,8 @@ fun RegistrationContent(
     state: RegistrationState,
     onIntent: (RegistrationIntent) -> Unit,
     onLoginClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onYandexSuccess: () -> Unit = {}
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
@@ -238,6 +241,13 @@ fun RegistrationContent(
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        YandexAuthSection(
+                            buttonText = "Зарегистрироваться через Яндекс",
+                            onSuccess = onYandexSuccess
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
