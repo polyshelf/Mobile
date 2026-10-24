@@ -56,8 +56,6 @@ android {
 
     defaultConfig {
         applicationId = "com.command.polyshelf"
-        // ID приложения из https://oauth.yandex.ru. Не секрет, но зависит от окружения:
-        // CI передаёт его переменной YANDEX_CLIENT_ID, локально можно положить в ~/.gradle/gradle.properties.
         manifestPlaceholders["YANDEX_CLIENT_ID"] = System.getenv("YANDEX_CLIENT_ID")
             ?: (project.findProperty("YANDEX_CLIENT_ID") as String?)
             ?: ""
@@ -71,10 +69,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    // Ключи подписи лежат в секретах GitHub и приходят в CI переменными окружения:
-    //   <PREFIX>_KEYSTORE_PATH, <PREFIX>_KEYSTORE_PASSWORD, <PREFIX>_KEY_ALIAS, <PREFIX>_KEY_PASSWORD,
-    // где PREFIX = PRE_RELEASE или RELEASE. Постоянный ключ => постоянный SHA256-отпечаток для Яндекса.
-    // Без переменных (локальная сборка) возвращается null и берётся debug-ключ.
     fun signingFor(prefix: String): ApkSigningConfig? {
         val path = System.getenv("${prefix}_KEYSTORE_PATH")
         return if (path == null) {
@@ -98,7 +92,6 @@ android {
             )
             signingConfig = signingFor("RELEASE")
         }
-        // Пре-релизная сборка: как release, но подписана ключом PRE_RELEASE.
         create("preRelease") {
             initWith(getByName("release"))
             matchingFallbacks += "release"

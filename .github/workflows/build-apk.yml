@@ -1,13 +1,6 @@
 name: Build APK
 
-#on:
-  #workflow_dispatch: TODO: remove comm before pr
-    #inputs:
-      #build_type:
 on:
-  push:
-    branches-ignore:
-      - main
   workflow_dispatch:
     inputs:
       build_type:
@@ -26,8 +19,7 @@ jobs:
   build-apk:
     runs-on: ubuntu-latest
     env:
-      #BUILD_TYPE: ${{ inputs.build_type }} TODO: remove comm before pr
-      BUILD_TYPE: ${{ inputs.build_type || 'pre_release' }}
+      BUILD_TYPE: ${{ inputs.build_type }}
     steps:
       - uses: actions/checkout@v4
 
@@ -78,11 +70,8 @@ jobs:
           echo "$FP"
           printf '### Подпись APK (%s)\n`%s`\n' "$BUILD_TYPE" "$FP" >> "$GITHUB_STEP_SUMMARY"
 
-      #- uses: actions/upload-artifact@v4 TODO: remove comm before pr
-        #with:
-          #name: polyshelf-${{ inputs.build_type }}-${{ github.run_number }}
       - uses: actions/upload-artifact@v4
         with:
-          name: polyshelf-${{ env.BUILD_TYPE }}-${{ github.run_number }}
+          name: polyshelf-${{ inputs.build_type }}-${{ github.run_number }}
           path: androidApp/build/outputs/apk/*/*.apk
           if-no-files-found: error
