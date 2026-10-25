@@ -62,7 +62,9 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = System.getenv("APP_VERSION")
+            ?: (project.findProperty("APP_VERSION") as String?)
+            ?: "1.0"
     }
     packaging {
         resources {
