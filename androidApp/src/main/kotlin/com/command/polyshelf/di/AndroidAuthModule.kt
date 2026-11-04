@@ -3,6 +3,8 @@ package com.command.polyshelf.di
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.command.polyshelf.data.storage.DATA_STORE_FILE_NAME
+import com.command.polyshelf.data.storage.EncryptedTokenStorage
+import com.command.polyshelf.data.storage.TokenStorage
 import com.command.polyshelf.data.storage.createDataStore
 import com.command.polyshelf.presentation.screen.auth.login.LoginViewModel
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationViewModel
@@ -18,6 +20,7 @@ val authModule = module {
             producePath = { androidContext().filesDir.resolve(DATA_STORE_FILE_NAME).absolutePath }
         )
     }
+    single<TokenStorage> { EncryptedTokenStorage(androidContext()) }
     viewModelOf(::SplashViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegistrationViewModel)

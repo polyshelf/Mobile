@@ -37,12 +37,20 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.activity.compose)
 
+    // CameraX & ML Kit
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mlkit.barcode.scanning)
+
     // Jetpack Compose (Нативный, через BOM)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material3.adaptive.navigation.suite)
     implementation(libs.compose.runtime)
+    implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
 
