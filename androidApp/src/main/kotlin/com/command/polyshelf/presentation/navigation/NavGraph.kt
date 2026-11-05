@@ -8,9 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.command.polyshelf.presentation.screen.auth.login.LoginScreen
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationScreen
-import com.command.polyshelf.presentation.screen.home.HomeScreen
+import com.command.polyshelf.presentation.screen.main.MainScreenContainer
+import com.command.polyshelf.presentation.screen.main.MainViewModel
 import com.command.polyshelf.presentation.screen.splash.SplashScreen
-import com.command.polyshelf.presentation.screen.splash.SplashViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -25,9 +25,13 @@ sealed interface Screen {
     data object Registration : Screen
 
     @Serializable
-    data object Home : Screen
+    data object Main : Screen
 }
 
+/**
+ * popUpTo - удаляет пройденные экраны (например Splash или Login) из стека навигации,
+ * чтобы при нажатии физической кнопки "Назад" пользователь не возвращался на экран входа/сплеша.
+ */
 @Composable
 fun PolyShelfNavGraph(
     modifier: Modifier = Modifier,
@@ -41,7 +45,7 @@ fun PolyShelfNavGraph(
         composable<Screen.Splash> {
             SplashScreen(
                 onAuthenticated = {
-                    navController.navigate(Screen.Home) {
+                    navController.navigate(Screen.Main) {
                         popUpTo<Screen.Splash> { inclusive = true }
                     }
                 },
@@ -59,7 +63,7 @@ fun PolyShelfNavGraph(
                     navController.navigate(Screen.Registration)
                 },
                 onLoginSuccess = {
-                    navController.navigate(Screen.Home) {
+                    navController.navigate(Screen.Main) {
                         popUpTo<Screen.Login> { inclusive = true }
                     }
                 }
@@ -72,20 +76,20 @@ fun PolyShelfNavGraph(
                     navController.popBackStack()
                 },
                 onRegisterSuccess = {
-                    navController.navigate(Screen.Home) {
+                    navController.navigate(Screen.Registration) {
                         popUpTo<Screen.Registration> { inclusive = true }
                     }
                 }
             )
         }
 
-        composable<Screen.Home> {
-            val splashViewModel: SplashViewModel = koinViewModel()
-            HomeScreen(
+        composable<Screen.Main> {
+            val mainViewModel: MainViewModel = koinViewModel()
+            MainScreenContainer(
                 onLogoutClick = {
-                    splashViewModel.logout()
+                    mainViewModel.logout()
                     navController.navigate(Screen.Login) {
-                        popUpTo<Screen.Home> { inclusive = true }
+                        popUpTo<Screen.Main> { inclusive = true }
                     }
                 }
             )

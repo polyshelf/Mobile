@@ -3,8 +3,10 @@ package com.command.polyshelf.data.storage
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.command.polyshelf.utils.Logger
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
@@ -21,19 +23,16 @@ class DataStoreTokenStorage(
         Logger.d("DataStoreTokenStorage", "saveTokens completed successfully")
     }
 
-    override suspend fun getAccessToken(): String? {
-        val token = dataStore.data.map { preferences ->
-            preferences[KEY_ACCESS_TOKEN]
-        }.firstOrNull()
-        Logger.d("DataStoreTokenStorage", "getAccessToken: ${if (token.isNullOrEmpty()) "NULL/EMPTY" else "PRESENT (len=${token.length})"}")
-        return token
-    }
+    override suspend fun getAccessToken(): String? = getTokenByKey(KEY_ACCESS_TOKEN, "getAccessToken")
 
-    override suspend fun getRefreshToken(): String? {
-        val token = dataStore.data.map { preferences ->
-            preferences[KEY_REFRESH_TOKEN]
-        }.firstOrNull()
-        Logger.d("DataStoreTokenStorage", "getRefreshToken: ${if (token.isNullOrEmpty()) "NULL/EMPTY" else "PRESENT (len=${token.length})"}")
+    override suspend fun getRefreshToken(): String? = getTokenByKey(KEY_REFRESH_TOKEN, "getRefreshToken")
+
+    private suspend fun getTokenByKey(key: Preferences.Key<String>, methodName: String): String? {
+        val token = dataStore.data
+            .catch { emit(emptyPreferences()) }
+            .map { preferences -> preferences[key] }
+            .firstOrNull()
+        Logger.d("DataStoreTokenStorage", "$methodName: ${if (token.isNullOrEmpty()) "NULL/EMPTY" else "PRESENT (len=${token.length})"}")
         return token
     }
 

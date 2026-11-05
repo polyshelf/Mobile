@@ -40,3 +40,8 @@ val OnSurfaceVariantDark = Color(0xFFD7C3B8)
 
 val ErrorColor = Color(0xFFBA1A1A)
 val OnErrorColor = Color(0xFFFFFFFF)
+
+// Freshness Status Colors
+val FreshnessFresh = Color(0xFF2E7D32)
+val FreshnessExpiringSoon = Color(0xFFF57C00)
+val FreshnessExpired = Color(0xFFC62828)
