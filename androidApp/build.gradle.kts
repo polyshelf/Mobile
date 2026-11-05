@@ -70,7 +70,9 @@ android {
             ?: ""
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
+        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+            ?: (project.findProperty("VERSION_CODE") as String?)?.toIntOrNull()
+            ?: 1
         versionName = System.getenv("APP_VERSION")
             ?: (project.findProperty("APP_VERSION") as String?)
             ?: "1.0"
