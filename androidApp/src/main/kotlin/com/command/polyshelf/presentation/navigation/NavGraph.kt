@@ -9,8 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import com.command.polyshelf.presentation.screen.auth.login.LoginScreen
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationScreen
 import com.command.polyshelf.presentation.screen.main.MainScreenContainer
+import com.command.polyshelf.presentation.screen.main.MainViewModel
 import com.command.polyshelf.presentation.screen.splash.SplashScreen
-import com.command.polyshelf.presentation.screen.splash.SplashViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -76,7 +76,7 @@ fun PolyShelfNavGraph(
                     navController.popBackStack()
                 },
                 onRegisterSuccess = {
-                    navController.navigate(Screen.Main) {
+                    navController.navigate(Screen.Registration) {
                         popUpTo<Screen.Registration> { inclusive = true }
                     }
                 }
@@ -84,10 +84,10 @@ fun PolyShelfNavGraph(
         }
 
         composable<Screen.Main> {
-            val splashViewModel: SplashViewModel = koinViewModel()
+            val mainViewModel: MainViewModel = koinViewModel()
             MainScreenContainer(
                 onLogoutClick = {
-                    splashViewModel.logout()
+                    mainViewModel.logout()
                     navController.navigate(Screen.Login) {
                         popUpTo<Screen.Main> { inclusive = true }
                     }

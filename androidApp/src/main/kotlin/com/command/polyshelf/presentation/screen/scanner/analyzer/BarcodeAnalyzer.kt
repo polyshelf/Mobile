@@ -8,6 +8,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.atomic.AtomicBoolean
 import timber.log.Timber
 
 class BarcodeAnalyzer(
@@ -28,6 +29,7 @@ class BarcodeAnalyzer(
 
     private val scanner = BarcodeScanning.getClient(options)
     private var isScanningEnabled = true
+    private val isProcessing = AtomicBoolean(false)
     private var lastScannedTimestamp = 0L
     private var lastScannedCode = ""
 
@@ -38,7 +40,7 @@ class BarcodeAnalyzer(
     @OptIn(ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
-        if (mediaImage == null || !isScanningEnabled) {
+        if (mediaImage == null || !isScanningEnabled || !isProcessing.compareAndSet(false, true)) {
             imageProxy.close()
             return
         }
@@ -65,6 +67,7 @@ class BarcodeAnalyzer(
                 Timber.e(ex, "Barcode scanning failed")
             }
             .addOnCompleteListener {
+                isProcessing.set(false)
                 imageProxy.close()
             }
     }
@@ -76,7 +79,6 @@ class BarcodeAnalyzer(
                 return
             }
 
-            // Immediately disable scanning synchronously so no subsequent frame triggers
             isScanningEnabled = false
             lastScannedTimestamp = currentTime
             lastScannedCode = rawValue
