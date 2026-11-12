@@ -12,6 +12,7 @@ import com.command.polyshelf.domain.product.usecase.AddProductWithoutCodeUseCase
 import com.command.polyshelf.domain.product.usecase.DeleteProductUseCase
 import com.command.polyshelf.domain.product.usecase.GetConsumedProductsUseCase
 import com.command.polyshelf.domain.product.usecase.GetInventoryUseCase
+import com.command.polyshelf.domain.product.usecase.RefreshInventoryUseCase
 import com.command.polyshelf.domain.product.usecase.ToggleConsumptionUseCase
 import org.koin.dsl.module
 
@@ -20,6 +21,7 @@ val sharedProductModule = module {
     single<ProductApi> { ProductApiImpl(get()) }
     single<ProductRepository> { ProductRepositoryImpl(get(), get()) }
     single { GetInventoryUseCase(get()) }
+    single { RefreshInventoryUseCase(get()) }
     single { GetConsumedProductsUseCase(get()) }
     single { AddDataMatrixProductUseCase(get()) }
     single { AddBarcodeProductUseCase(get()) }

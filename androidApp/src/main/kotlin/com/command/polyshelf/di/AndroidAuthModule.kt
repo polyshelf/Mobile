@@ -2,6 +2,9 @@ package com.command.polyshelf.di
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.command.polyshelf.data.notification.NotificationHelper
+import com.command.polyshelf.data.notification.NotificationScheduler
+import com.command.polyshelf.data.settings.SettingsStorage
 import com.command.polyshelf.data.storage.AndroidDataStoreTokenStorage
 import com.command.polyshelf.data.storage.AndroidKeyStoreCipher
 import com.command.polyshelf.data.storage.DATA_STORE_FILE_NAME
@@ -10,7 +13,9 @@ import com.command.polyshelf.data.storage.createDataStore
 import com.command.polyshelf.presentation.screen.auth.login.LoginViewModel
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationViewModel
 import com.command.polyshelf.presentation.screen.auth.yandex.YandexAuthViewModel
+import com.command.polyshelf.presentation.screen.changepassword.ChangePasswordViewModel
 import com.command.polyshelf.presentation.screen.main.MainViewModel
+import com.command.polyshelf.presentation.screen.settings.SettingsViewModel
 import com.command.polyshelf.presentation.screen.splash.SplashViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
@@ -24,9 +29,14 @@ val authModule = module {
     }
     single { AndroidKeyStoreCipher() }
     single<TokenStorage> { AndroidDataStoreTokenStorage(get(), get()) }
+    single { SettingsStorage(get()) }
+    single { NotificationHelper(androidContext()) }
+    single { NotificationScheduler(androidContext()) }
     viewModelOf(::SplashViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegistrationViewModel)
     viewModelOf(::YandexAuthViewModel)
     viewModelOf(::MainViewModel)
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::ChangePasswordViewModel)
 }

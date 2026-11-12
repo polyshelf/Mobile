@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,10 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.command.polyshelf.domain.product.model.FreshnessStatus
+import com.command.polyshelf.domain.product.model.InventoryItem
 import com.command.polyshelf.presentation.components.banner.WarningBanner
 import com.command.polyshelf.presentation.components.card.InventoryItemCard
+import com.command.polyshelf.presentation.theme.PolyShelfTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -149,5 +151,33 @@ fun ConsumedContent(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ConsumedContentPreview() {
+    PolyShelfTheme {
+        ConsumedContent(
+            state = ConsumedState(
+                items = listOf(
+                    InventoryItem(
+                        id = "1",
+                        name = "Яблоки",
+                        expirationDate = "2026-03-20",
+                        isConsumed = true,
+                        freshnessStatus = FreshnessStatus.FRESH
+                    ),
+                    InventoryItem(
+                        id = "2",
+                        name = "Хлеб",
+                        expirationDate = "2026-03-15",
+                        isConsumed = true,
+                        freshnessStatus = FreshnessStatus.EXPIRED
+                    )
+                )
+            ),
+            onIntent = {}
+        )
     }
 }

@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.command.polyshelf.presentation.screen.auth.login.LoginScreen
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationScreen
+import com.command.polyshelf.presentation.screen.changepassword.ChangePasswordScreen
 import com.command.polyshelf.presentation.screen.main.MainScreenContainer
 import com.command.polyshelf.presentation.screen.main.MainViewModel
 import com.command.polyshelf.presentation.screen.splash.SplashScreen
@@ -26,6 +27,9 @@ sealed interface Screen {
 
     @Serializable
     data object Main : Screen
+
+    @Serializable
+    data object ChangePassword : Screen
 }
 
 /**
@@ -86,11 +90,22 @@ fun PolyShelfNavGraph(
         composable<Screen.Main> {
             val mainViewModel: MainViewModel = koinViewModel()
             MainScreenContainer(
+                onChangePasswordClick = {
+                    navController.navigate(Screen.ChangePassword)
+                },
                 onLogoutClick = {
                     mainViewModel.logout()
                     navController.navigate(Screen.Login) {
                         popUpTo<Screen.Main> { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable<Screen.ChangePassword> {
+            ChangePasswordScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }

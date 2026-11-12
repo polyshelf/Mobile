@@ -23,7 +23,7 @@ class ConsumedViewModel(
 
     init {
         viewModelScope.launch {
-            getConsumedProductsUseCase.consumedProductsFlow.collect { items ->
+            getConsumedProductsUseCase().collect { items ->
                 state.update { it.copy(items = items) }
             }
         }

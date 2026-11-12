@@ -6,6 +6,7 @@ import com.command.polyshelf.data.network.product.exception.ProductNetworkExcept
 import com.command.polyshelf.domain.product.model.InventoryItem
 import com.command.polyshelf.domain.product.usecase.DeleteProductUseCase
 import com.command.polyshelf.domain.product.usecase.GetInventoryUseCase
+import com.command.polyshelf.domain.product.usecase.RefreshInventoryUseCase
 import com.command.polyshelf.domain.product.usecase.ToggleConsumptionUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,7 @@ import timber.log.Timber
 
 class InventoryViewModel(
     private val getInventoryUseCase: GetInventoryUseCase,
+    private val refreshInventoryUseCase: RefreshInventoryUseCase,
     private val toggleConsumptionUseCase: ToggleConsumptionUseCase,
     private val deleteProductUseCase: DeleteProductUseCase
 ) : ViewModel() {
@@ -24,7 +26,7 @@ class InventoryViewModel(
 
     init {
         viewModelScope.launch {
-            getInventoryUseCase.inventoryFlow.collect { items ->
+            getInventoryUseCase().collect { items ->
                 state.update { it.copy(items = items) }
             }
         }
@@ -46,7 +48,7 @@ class InventoryViewModel(
                 state.update { it.copy(isLoading = true, networkErrorMessage = null) }
             }
 
-            val result = getInventoryUseCase.refresh()
+            val result = refreshInventoryUseCase()
             if (result.isFailure) {
                 val ex = result.exceptionOrNull()
                 Timber.e(ex, "Failed to load inventory")
