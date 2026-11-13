@@ -35,7 +35,11 @@ class SettingsViewModel(
     fun onIntent(intent: SettingsIntent) {
         when (intent) {
             is SettingsIntent.ToggleNotifications -> handleToggleNotifications(intent.enabled)
-            is SettingsIntent.SetNotificationTime -> handleSetNotificationTime(intent.hour, intent.minute)
+            is SettingsIntent.SetNotificationTime -> handleSetNotificationTime(
+                intent.hour,
+                intent.minute
+            )
+
             is SettingsIntent.SetThresholdDays -> handleSetThresholdDays(intent.days)
         }
     }
@@ -45,7 +49,10 @@ class SettingsViewModel(
             settingsStorage.updateEnabled(enabled)
             val s = state.value
             if (enabled) {
-                notificationScheduler.scheduleDailyNotification(s.notificationHour, s.notificationMinute)
+                notificationScheduler.scheduleDailyNotification(
+                    s.notificationHour,
+                    s.notificationMinute
+                )
             } else {
                 notificationScheduler.cancelNotification()
             }

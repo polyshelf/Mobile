@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,8 +51,8 @@ import com.command.polyshelf.presentation.theme.FreshnessExpired
 import com.command.polyshelf.presentation.theme.FreshnessExpiringSoon
 import com.command.polyshelf.presentation.theme.FreshnessFresh
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoryItemCard(
     item: InventoryItem,
@@ -75,21 +74,25 @@ fun InventoryItemCard(
 
     LaunchedEffect(isDismissed) {
         if (isDismissed) {
-            delay(280L)
+            delay(280L.milliseconds)
             onDelete()
         }
     }
 
     LaunchedEffect(isTogglingConsumption) {
         if (isTogglingConsumption) {
-            delay(220L)
+            delay(220L.milliseconds)
             onToggleConsumption()
         }
     }
 
     AnimatedVisibility(
         visible = !isDismissed && !isTogglingConsumption,
-        exit = shrinkVertically(animationSpec = tween(durationMillis = 280)) + fadeOut(animationSpec = tween(durationMillis = 180)),
+        exit = shrinkVertically(animationSpec = tween(durationMillis = 280)) + fadeOut(
+            animationSpec = tween(
+                durationMillis = 180
+            )
+        ),
         enter = fadeIn(animationSpec = tween(durationMillis = 180))
     ) {
         SwipeToDismissBox(
@@ -97,8 +100,9 @@ fun InventoryItemCard(
             enableDismissFromStartToEnd = false,
             enableDismissFromEndToStart = true,
             backgroundContent = {
-                val isSwipingLeft = dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart ||
-                        dismissState.targetValue == SwipeToDismissBoxValue.EndToStart
+                val isSwipingLeft =
+                    dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart ||
+                            dismissState.targetValue == SwipeToDismissBoxValue.EndToStart
 
                 val backgroundColor by animateColorAsState(
                     if (isSwipingLeft) MaterialTheme.colorScheme.errorContainer else Color.Transparent,

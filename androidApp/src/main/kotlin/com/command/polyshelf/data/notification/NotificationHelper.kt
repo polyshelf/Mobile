@@ -23,7 +23,8 @@ class NotificationHelper(private val context: Context) {
             ).apply {
                 description = "Уведомления о скоро портящихся продуктах"
             }
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val manager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
     }

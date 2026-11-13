@@ -27,33 +27,37 @@ class ProductApiImpl(
     private val client: HttpClient
 ) : ProductApi {
 
-    override suspend fun addDataMatrixProduct(request: ProductDataMatrixRequest): Result<ProductResponse> = safeCall {
-        client.post("products/from-datamatrix") {
-            contentType(ContentType.Application.Json)
-            setBody(request)
-        }.body()
-    }
+    override suspend fun addDataMatrixProduct(request: ProductDataMatrixRequest): Result<ProductResponse> =
+        safeCall {
+            client.post("products/from-datamatrix") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+        }
 
-    override suspend fun addBarcodeProduct(request: ProductBarcodeRequest): Result<ProductResponse> = safeCall {
-        client.post("products/from-barcode") {
-            contentType(ContentType.Application.Json)
-            setBody(request)
-        }.body()
-    }
+    override suspend fun addBarcodeProduct(request: ProductBarcodeRequest): Result<ProductResponse> =
+        safeCall {
+            client.post("products/from-barcode") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+        }
 
-    override suspend fun addBarcodeCandidateProduct(request: ProductBarcodeCandidateRequest): Result<ProductResponse> = safeCall {
-        client.post("products/from-barcode-candidate") {
-            contentType(ContentType.Application.Json)
-            setBody(request)
-        }.body()
-    }
+    override suspend fun addBarcodeCandidateProduct(request: ProductBarcodeCandidateRequest): Result<ProductResponse> =
+        safeCall {
+            client.post("products/from-barcode-candidate") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+        }
 
-    override suspend fun addProductWithoutCode(request: ProductWithoutCodeRequest): Result<ProductResponse> = safeCall {
-        client.post("products") {
-            contentType(ContentType.Application.Json)
-            setBody(request)
-        }.body()
-    }
+    override suspend fun addProductWithoutCode(request: ProductWithoutCodeRequest): Result<ProductResponse> =
+        safeCall {
+            client.post("products") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+        }
 
     override suspend fun getInventory(): Result<List<InventoryItemResponse>> = safeCall {
         client.get("products/inventory").body()

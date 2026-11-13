@@ -124,7 +124,13 @@ fun ConsumedContent(
                                             duration = SnackbarDuration.Short
                                         )
                                         if (result == SnackbarResult.ActionPerformed) {
-                                            onIntent(ConsumedIntent.UnmarkConsumed(item.copy(isConsumed = false)))
+                                            onIntent(
+                                                ConsumedIntent.UnmarkConsumed(
+                                                    item.copy(
+                                                        isConsumed = false
+                                                    )
+                                                )
+                                            )
                                         }
                                     }
                                 },

@@ -28,7 +28,12 @@ class ScannerViewModel(
     fun onIntent(intent: ScannerIntent) {
         when (intent) {
             is ScannerIntent.CodeScanned -> handleCodeScanned(intent.result, intent.expirationDate)
-            is ScannerIntent.SubmitCandidate -> handleSubmitCandidate(intent.code, intent.name, intent.expirationDate)
+            is ScannerIntent.SubmitCandidate -> handleSubmitCandidate(
+                intent.code,
+                intent.name,
+                intent.expirationDate
+            )
+
             is ScannerIntent.DismissCandidateDialog -> state.update { it.copy(candidateData = null) }
             is ScannerIntent.ClearError -> state.update { it.copy(networkErrorMessage = null) }
             is ScannerIntent.ResetState -> state.update { ScannerState() }
@@ -78,7 +83,13 @@ class ScannerViewModel(
 
     private fun handleSubmitCandidate(code: String, name: String, expirationDate: String) {
         viewModelScope.launch {
-            state.update { it.copy(isLoading = true, candidateData = null, networkErrorMessage = null) }
+            state.update {
+                it.copy(
+                    isLoading = true,
+                    candidateData = null,
+                    networkErrorMessage = null
+                )
+            }
 
             val apiResult = addBarcodeCandidateProductUseCase(code, name, expirationDate)
             apiResult.onSuccess {

@@ -28,7 +28,4 @@ class ProductLocalDataSource {
         }
     }
 
-    fun clear() {
-        _productsFlow.value = emptyList()
-    }
 }

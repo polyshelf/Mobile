@@ -195,7 +195,13 @@ fun InventoryContent(
                                             duration = SnackbarDuration.Short
                                         )
                                         if (result == SnackbarResult.ActionPerformed) {
-                                            onIntent(InventoryIntent.ToggleConsumption(item.copy(isConsumed = true)))
+                                            onIntent(
+                                                InventoryIntent.ToggleConsumption(
+                                                    item.copy(
+                                                        isConsumed = true
+                                                    )
+                                                )
+                                            )
                                         }
                                     }
                                 },

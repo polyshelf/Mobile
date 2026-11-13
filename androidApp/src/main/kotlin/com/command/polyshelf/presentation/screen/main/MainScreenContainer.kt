@@ -160,6 +160,7 @@ fun MainScreenContainer(
                         onLogoutClick = onLogoutClick
                     )
                 }
+
                 MainTab.SCANNER.ordinal -> {
                     ScannerScreen(
                         onNavigateBack = {
@@ -172,9 +173,11 @@ fun MainScreenContainer(
                         }
                     )
                 }
+
                 MainTab.CONSUMED.ordinal -> {
                     ConsumedScreen()
                 }
+
                 MainTab.SETTINGS.ordinal -> {
                     SettingsScreen()
                 }

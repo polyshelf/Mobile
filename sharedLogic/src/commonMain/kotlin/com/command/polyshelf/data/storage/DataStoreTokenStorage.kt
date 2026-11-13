@@ -15,7 +15,10 @@ class DataStoreTokenStorage(
 ) : TokenStorage {
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
-        Logger.d("DataStoreTokenStorage", "saveTokens called. accessToken length=${accessToken.length}, refreshToken length=${refreshToken.length}")
+        Logger.d(
+            "DataStoreTokenStorage",
+            "saveTokens called. accessToken length=${accessToken.length}, refreshToken length=${refreshToken.length}"
+        )
         dataStore.edit { preferences ->
             preferences[KEY_ACCESS_TOKEN] = accessToken
             preferences[KEY_REFRESH_TOKEN] = refreshToken
@@ -23,16 +26,21 @@ class DataStoreTokenStorage(
         Logger.d("DataStoreTokenStorage", "saveTokens completed successfully")
     }
 
-    override suspend fun getAccessToken(): String? = getTokenByKey(KEY_ACCESS_TOKEN, "getAccessToken")
+    override suspend fun getAccessToken(): String? =
+        getTokenByKey(KEY_ACCESS_TOKEN, "getAccessToken")
 
-    override suspend fun getRefreshToken(): String? = getTokenByKey(KEY_REFRESH_TOKEN, "getRefreshToken")
+    override suspend fun getRefreshToken(): String? =
+        getTokenByKey(KEY_REFRESH_TOKEN, "getRefreshToken")
 
     private suspend fun getTokenByKey(key: Preferences.Key<String>, methodName: String): String? {
         val token = dataStore.data
             .catch { emit(emptyPreferences()) }
             .map { preferences -> preferences[key] }
             .firstOrNull()
-        Logger.d("DataStoreTokenStorage", "$methodName: ${if (token.isNullOrEmpty()) "NULL/EMPTY" else "PRESENT (len=${token.length})"}")
+        Logger.d(
+            "DataStoreTokenStorage",
+            "$methodName: ${if (token.isNullOrEmpty()) "NULL/EMPTY" else "PRESENT (len=${token.length})"}"
+        )
         return token
     }
 
