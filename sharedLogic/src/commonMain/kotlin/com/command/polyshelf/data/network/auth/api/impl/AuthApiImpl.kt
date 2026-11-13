@@ -85,10 +85,13 @@ class AuthApiImpl(
             when {
                 error?.code == CODE_YANDEX_LINK_REQUIRED ->
                     Result.failure(AuthNetworkException.YandexLinkRequired(error.message))
+
                 error?.code == CODE_INVALID_PASSWORD ->
                     Result.failure(AuthNetworkException.InvalidLinkPassword())
+
                 error?.code == CODE_YANDEX_TOKEN_INVALID ->
                     Result.failure(AuthNetworkException.YandexTokenInvalid())
+
                 e.response.status == HttpStatusCode.Conflict -> Result.failure(e.toConflictException())
                 else -> Result.failure(AuthNetworkException.Unknown(error?.message ?: e.message))
             }

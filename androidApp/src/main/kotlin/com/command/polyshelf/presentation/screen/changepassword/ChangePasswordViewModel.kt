@@ -20,11 +20,37 @@ class ChangePasswordViewModel(
 
     fun onIntent(intent: ChangePasswordIntent) {
         when (intent) {
-            is ChangePasswordIntent.CurrentPasswordChanged -> state.update { it.copy(currentPassword = intent.value, errorMessage = null, successMessage = null) }
-            is ChangePasswordIntent.NewPasswordChanged -> state.update { it.copy(newPassword = intent.value, errorMessage = null, successMessage = null) }
-            is ChangePasswordIntent.ConfirmPasswordChanged -> state.update { it.copy(confirmPassword = intent.value, errorMessage = null, successMessage = null) }
+            is ChangePasswordIntent.CurrentPasswordChanged -> state.update {
+                it.copy(
+                    currentPassword = intent.value,
+                    errorMessage = null,
+                    successMessage = null
+                )
+            }
+
+            is ChangePasswordIntent.NewPasswordChanged -> state.update {
+                it.copy(
+                    newPassword = intent.value,
+                    errorMessage = null,
+                    successMessage = null
+                )
+            }
+
+            is ChangePasswordIntent.ConfirmPasswordChanged -> state.update {
+                it.copy(
+                    confirmPassword = intent.value,
+                    errorMessage = null,
+                    successMessage = null
+                )
+            }
+
             is ChangePasswordIntent.Submit -> handleSubmit()
-            is ChangePasswordIntent.ClearMessages -> state.update { it.copy(errorMessage = null, successMessage = null) }
+            is ChangePasswordIntent.ClearMessages -> state.update {
+                it.copy(
+                    errorMessage = null,
+                    successMessage = null
+                )
+            }
         }
     }
 

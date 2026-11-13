@@ -3,7 +3,6 @@ package com.command.polyshelf.presentation.screen.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.command.polyshelf.domain.auth.usecase.CheckAuthUseCase
-import com.command.polyshelf.domain.auth.usecase.LogoutUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -12,7 +11,6 @@ import timber.log.Timber
 
 class SplashViewModel(
     private val checkAuthUseCase: CheckAuthUseCase,
-    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     val authState: StateFlow<SplashAuthState>
@@ -31,16 +29,12 @@ class SplashViewModel(
                 Timber.d("SplashViewModel: checkAuth SUCCESS -> SplashAuthState.Authenticated")
                 authState.update { SplashAuthState.Authenticated }
             }.onFailure { ex ->
-                Timber.e(ex, "SplashViewModel: checkAuth FAILED -> SplashAuthState.Unauthenticated. Reason: ${ex.message}")
+                Timber.e(
+                    ex,
+                    "SplashViewModel: checkAuth FAILED -> SplashAuthState.Unauthenticated. Reason: ${ex.message}"
+                )
                 authState.update { SplashAuthState.Unauthenticated }
             }
-        }
-    }
-
-    fun logout() {
-        viewModelScope.launch {
-            Timber.d("SplashViewModel: logout() called")
-            logoutUseCase()
         }
     }
 }

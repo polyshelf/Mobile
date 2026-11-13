@@ -20,9 +20,10 @@ class ProductRepositoryImpl(
     private val localDataSource: ProductLocalDataSource
 ) : ProductRepository {
 
-    override fun getInventoryFlow(): Flow<List<InventoryItem>> = localDataSource.productsFlow.map { entities ->
-        entities.map { it.toDomain() }
-    }
+    override fun getInventoryFlow(): Flow<List<InventoryItem>> =
+        localDataSource.productsFlow.map { entities ->
+            entities.map { it.toDomain() }
+        }
 
     override suspend fun loadInventory(): Result<List<InventoryItem>> {
         return productApi.getInventory().map { list ->
@@ -129,7 +130,8 @@ class ProductRepositoryImpl(
     private fun calculateFreshness(expirationDateStr: String): FreshnessStatus {
         if (expirationDateStr.isBlank()) return FreshnessStatus.FRESH
         return try {
-            val dateComponents = parseDateComponents(expirationDateStr) ?: return FreshnessStatus.FRESH
+            val dateComponents =
+                parseDateComponents(expirationDateStr) ?: return FreshnessStatus.FRESH
             val (year, month, day) = dateComponents
 
             val expEpochDays = toEpochDays(year, month, day)
@@ -153,7 +155,10 @@ class ProductRepositoryImpl(
         return DateComponents(year, month, day)
     }
 
-    private fun determineFreshnessStatus(expEpochDays: Long, currentEpochDays: Long): FreshnessStatus {
+    private fun determineFreshnessStatus(
+        expEpochDays: Long,
+        currentEpochDays: Long
+    ): FreshnessStatus {
         val daysRemaining = expEpochDays - currentEpochDays
         return when {
             daysRemaining < 0 -> FreshnessStatus.EXPIRED

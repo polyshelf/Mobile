@@ -30,9 +30,11 @@ class AndroidDataStoreTokenStorage(
         }
     }
 
-    override suspend fun getAccessToken(): String? = getDecryptedTokenByKey(KEY_ACCESS_TOKEN, "access token")
+    override suspend fun getAccessToken(): String? =
+        getDecryptedTokenByKey(KEY_ACCESS_TOKEN, "access token")
 
-    override suspend fun getRefreshToken(): String? = getDecryptedTokenByKey(KEY_REFRESH_TOKEN, "refresh token")
+    override suspend fun getRefreshToken(): String? =
+        getDecryptedTokenByKey(KEY_REFRESH_TOKEN, "refresh token")
 
     private suspend fun getDecryptedTokenByKey(
         key: Preferences.Key<String>,

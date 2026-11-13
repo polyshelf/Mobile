@@ -28,11 +28,17 @@ class NotificationAlarmReceiver : BroadcastReceiver(), KoinComponent {
                 if (settings.isNotificationsEnabled) {
                     // Reschedule for next day FIRST so alarm is guaranteed to recur daily
                     val scheduler = NotificationScheduler(context)
-                    scheduler.scheduleDailyNotification(settings.notificationHour, settings.notificationMinute)
+                    scheduler.scheduleDailyNotification(
+                        settings.notificationHour,
+                        settings.notificationMinute
+                    )
 
                     try {
                         val items = getInventoryUseCase().first()
-                        val (expiringSoonCount, expiredCount) = calculateExpiringCounts(items, settings.thresholdDays)
+                        val (expiringSoonCount, expiredCount) = calculateExpiringCounts(
+                            items,
+                            settings.thresholdDays
+                        )
 
                         if (expiringSoonCount > 0 || expiredCount > 0) {
                             val helper = NotificationHelper(context)
@@ -63,8 +69,8 @@ class NotificationAlarmReceiver : BroadcastReceiver(), KoinComponent {
         var expiringSoonCount = 0
         var expiredCount = 0
 
-        for (item in items) {
-            val expDays = parseEpochDays(item.expirationDate)
+        for ((_, _, expirationDate, _, freshnessStatus) in items) {
+            val expDays = parseEpochDays(expirationDate)
             if (expDays != null) {
                 val daysRemaining = expDays - currentEpochDays
                 if (daysRemaining < 0) {
@@ -72,9 +78,9 @@ class NotificationAlarmReceiver : BroadcastReceiver(), KoinComponent {
                 } else if (daysRemaining <= thresholdDays) {
                     expiringSoonCount++
                 }
-            } else if (item.freshnessStatus == FreshnessStatus.EXPIRED) {
+            } else if (freshnessStatus == FreshnessStatus.EXPIRED) {
                 expiredCount++
-            } else if (item.freshnessStatus == FreshnessStatus.EXPIRING_SOON) {
+            } else if (freshnessStatus == FreshnessStatus.EXPIRING_SOON) {
                 expiringSoonCount++
             }
         }
@@ -84,9 +90,5 @@ class NotificationAlarmReceiver : BroadcastReceiver(), KoinComponent {
 
     companion object {
         private const val MILLIS_PER_DAY = 24 * 60 * 60 * 1000L
-
-        fun newIntent(context: Context): Intent {
-            return Intent(context, NotificationAlarmReceiver::class.java)
-        }
     }
 }
