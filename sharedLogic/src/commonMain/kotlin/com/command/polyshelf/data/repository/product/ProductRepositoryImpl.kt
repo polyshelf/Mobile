@@ -20,7 +20,7 @@ class ProductRepositoryImpl(
     private val localDataSource: ProductLocalDataSource
 ) : ProductRepository {
 
-    override val inventoryFlow: Flow<List<InventoryItem>> = localDataSource.productsFlow.map { entities ->
+    override fun getInventoryFlow(): Flow<List<InventoryItem>> = localDataSource.productsFlow.map { entities ->
         entities.map { it.toDomain() }
     }
 

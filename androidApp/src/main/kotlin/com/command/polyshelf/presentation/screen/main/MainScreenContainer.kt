@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,17 +32,20 @@ import androidx.compose.ui.unit.dp
 import com.command.polyshelf.presentation.screen.consumed.ConsumedScreen
 import com.command.polyshelf.presentation.screen.inventory.InventoryScreen
 import com.command.polyshelf.presentation.screen.scanner.ScannerScreen
+import com.command.polyshelf.presentation.screen.settings.SettingsScreen
 
 enum class MainTab {
     INVENTORY,
     SCANNER,
-    CONSUMED
+    CONSUMED,
+    SETTINGS
 }
 
 @Composable
 fun MainScreenContainer(
-    modifier: Modifier = Modifier,
-    onLogoutClick: () -> Unit
+    onChangePasswordClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableIntStateOf(MainTab.INVENTORY.ordinal) }
     var previousTab by remember { mutableIntStateOf(MainTab.INVENTORY.ordinal) }
@@ -113,6 +117,21 @@ fun MainScreenContainer(
                 },
                 label = { Text("Съедено") }
             )
+
+            item(
+                selected = selectedTab == MainTab.SETTINGS.ordinal,
+                onClick = {
+                    previousTab = selectedTab
+                    selectedTab = MainTab.SETTINGS.ordinal
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Настройки"
+                    )
+                },
+                label = { Text("Настройки") }
+            )
         }
     ) {
         val isMovingRight = selectedTab > previousTab
@@ -137,6 +156,7 @@ fun MainScreenContainer(
             when (targetTab) {
                 MainTab.INVENTORY.ordinal -> {
                     InventoryScreen(
+                        onChangePasswordClick = onChangePasswordClick,
                         onLogoutClick = onLogoutClick
                     )
                 }
@@ -154,6 +174,9 @@ fun MainScreenContainer(
                 }
                 MainTab.CONSUMED.ordinal -> {
                     ConsumedScreen()
+                }
+                MainTab.SETTINGS.ordinal -> {
+                    SettingsScreen()
                 }
             }
         }

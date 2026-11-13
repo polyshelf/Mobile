@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.map
 class GetConsumedProductsUseCase(
     private val productRepository: ProductRepository
 ) {
-    val consumedProductsFlow: Flow<List<InventoryItem>>
-        get() = productRepository.inventoryFlow.map { list ->
+    operator fun invoke(): Flow<List<InventoryItem>> =
+        productRepository.getInventoryFlow().map { list ->
             list.filter { it.isConsumed }
         }
 }

@@ -6,6 +6,7 @@ import com.command.polyshelf.data.repository.auth.AuthRepositoryImpl
 import com.command.polyshelf.data.storage.DataStoreTokenStorage
 import com.command.polyshelf.data.storage.TokenStorage
 import com.command.polyshelf.domain.auth.repository.AuthRepository
+import com.command.polyshelf.domain.auth.usecase.ChangePasswordUseCase
 import com.command.polyshelf.domain.auth.usecase.CheckAuthUseCase
 import com.command.polyshelf.domain.auth.usecase.LoginUseCase
 import com.command.polyshelf.domain.auth.usecase.LogoutUseCase
@@ -22,4 +23,5 @@ val sharedAuthModule = module {
     single<YandexLoginUseCase> { YandexLoginUseCase(get()) }
     single<CheckAuthUseCase> { CheckAuthUseCase(get()) }
     single<LogoutUseCase> { LogoutUseCase(get()) }
+    single<ChangePasswordUseCase> { ChangePasswordUseCase(get()) }
 }

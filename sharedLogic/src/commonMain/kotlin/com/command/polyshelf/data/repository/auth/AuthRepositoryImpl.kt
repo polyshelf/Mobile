@@ -1,6 +1,7 @@
 package com.command.polyshelf.data.repository.auth
 
 import com.command.polyshelf.data.network.auth.api.AuthApi
+import com.command.polyshelf.data.network.auth.dto.ChangePasswordRequest
 import com.command.polyshelf.data.network.auth.dto.RefreshTokenRequest
 import com.command.polyshelf.data.network.auth.dto.YandexAuthRequest
 import com.command.polyshelf.data.network.auth.exception.AuthNetworkException
@@ -91,5 +92,17 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         Logger.d("AuthRepositoryImpl", "logout() called -> clearing tokenStorage")
         tokenStorage.clear()
+    }
+
+    override suspend fun changePassword(currentPassword: String, newPassword: String): Result<Unit> {
+        Logger.d("AuthRepositoryImpl", "changePassword() started")
+        return authApi.changePassword(
+            ChangePasswordRequest(
+                currentPassword = currentPassword,
+                newPassword = newPassword
+            )
+        ).onFailure { ex ->
+            Logger.e("AuthRepositoryImpl", "changePassword() FAILED: ${ex.message}", ex)
+        }
     }
 }

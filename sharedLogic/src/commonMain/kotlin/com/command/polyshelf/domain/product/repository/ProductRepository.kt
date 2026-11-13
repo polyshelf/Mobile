@@ -4,7 +4,7 @@ import com.command.polyshelf.domain.product.model.InventoryItem
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
-    val inventoryFlow: Flow<List<InventoryItem>>
+    fun getInventoryFlow(): Flow<List<InventoryItem>>
     suspend fun loadInventory(): Result<List<InventoryItem>>
     suspend fun addDataMatrixProduct(code: String): Result<Unit>
     suspend fun addBarcodeProduct(code: String, expirationDate: String): Result<Unit>

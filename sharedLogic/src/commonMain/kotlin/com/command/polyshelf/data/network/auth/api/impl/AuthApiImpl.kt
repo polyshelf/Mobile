@@ -3,6 +3,7 @@ package com.command.polyshelf.data.network.auth.api.impl
 import com.command.polyshelf.data.network.auth.api.AuthApi
 import com.command.polyshelf.data.network.auth.dto.AuthErrorDto
 import com.command.polyshelf.data.network.auth.dto.AuthResponse
+import com.command.polyshelf.data.network.auth.dto.ChangePasswordRequest
 import com.command.polyshelf.data.network.auth.dto.RefreshTokenRequest
 import com.command.polyshelf.data.network.auth.dto.UserDto
 import com.command.polyshelf.data.network.auth.dto.YandexAuthRequest
@@ -16,6 +17,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.utils.io.CancellationException
 
 class AuthApiImpl(
@@ -119,6 +121,33 @@ class AuthApiImpl(
         }
     }
 
+    override suspend fun changePassword(request: ChangePasswordRequest): Result<Unit> {
+        return try {
+            val response = client.post(END_POINT_CHANGE_PASSWORD) {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+            if (response.status == HttpStatusCode.NoContent || response.status.isSuccess()) {
+                Result.success(Unit)
+            } else {
+                Result.failure(AuthNetworkException.Unknown("HTTP ${response.status}"))
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: ClientRequestException) {
+            when (e.response.status) {
+                HttpStatusCode.Unauthorized -> Result.failure(AuthNetworkException.InvalidRefreshToken())
+                HttpStatusCode.Forbidden -> Result.failure(AuthNetworkException.InvalidLinkPassword())
+                HttpStatusCode.BadRequest -> Result.failure(AuthNetworkException.InvalidEmailOrPasswordFormat())
+                else -> Result.failure(AuthNetworkException.Unknown(e.message))
+            }
+        } catch (_: ServerResponseException) {
+            Result.failure(AuthNetworkException.ServerError())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     private suspend fun ClientRequestException.readError(): AuthErrorDto? = try {
         response.body<AuthErrorDto>()
     } catch (e: CancellationException) {
@@ -142,5 +171,6 @@ class AuthApiImpl(
         const val END_POINT_LOGIN = "auth/login"
         const val END_POINT_REGISTER = "auth/register"
         const val END_POINT_REFRESH = "auth/refresh"
+        const val END_POINT_CHANGE_PASSWORD = "auth/change-password"
     }
 }
