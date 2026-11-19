@@ -32,27 +32,18 @@ dependencies {
 
     // Базовые библиотеки Android
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.activity.compose)
-
-    // CameraX & ML Kit
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.mlkit.barcode.scanning)
 
     // Jetpack Compose (Нативный, через BOM)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
-    implementation(libs.compose.material3.adaptive.navigation.suite)
     implementation(libs.compose.runtime)
-    implementation(libs.androidx.security.crypto)
-    implementation(libs.androidx.material.icons.core)
-    implementation(libs.androidx.material.icons.extended)
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
 
     // Tooling для превью
     implementation(libs.compose.ui.tooling.preview)
@@ -67,15 +58,13 @@ android {
         applicationId = "com.command.polyshelf"
         manifestPlaceholders["YANDEX_CLIENT_ID"] = System.getenv("YANDEX_CLIENT_ID")
             ?: (project.findProperty("YANDEX_CLIENT_ID") as String?)
-                    ?: ""
+            ?: ""
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
-            ?: (project.findProperty("VERSION_CODE") as String?)?.toIntOrNull()
-                    ?: 1
+        versionCode = 1
         versionName = System.getenv("APP_VERSION")
             ?: (project.findProperty("APP_VERSION") as String?)
-                    ?: "1.0"
+            ?: "1.0"
     }
     packaging {
         resources {

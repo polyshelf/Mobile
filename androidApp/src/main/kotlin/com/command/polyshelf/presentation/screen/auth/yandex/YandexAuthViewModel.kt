@@ -24,17 +24,14 @@ class YandexAuthViewModel(
             is YandexAuthIntent.SdkFailed -> state.update {
                 it.copy(isLoading = false, errorMessage = "Не удалось войти через Яндекс")
             }
-
             is YandexAuthIntent.LinkPasswordChanged -> state.update {
                 it.copy(link = it.link?.copy(password = intent.password, error = null))
             }
-
             is YandexAuthIntent.LinkConfirmed -> {
                 val token = pendingToken
                 val password = state.value.link?.password
                 if (token != null && !password.isNullOrEmpty()) signIn(token, password)
             }
-
             is YandexAuthIntent.LinkDismissed -> {
                 pendingToken = null
                 state.update { it.copy(link = null) }
@@ -68,11 +65,9 @@ class YandexAuthViewModel(
                     )
                 }
             }
-
             is AuthNetworkException.InvalidLinkPassword -> state.update {
                 it.copy(isLoading = false, link = it.link?.copy(error = "Неверный пароль"))
             }
-
             else -> state.update {
                 it.copy(isLoading = false, errorMessage = messageFor(ex))
             }
@@ -83,7 +78,6 @@ class YandexAuthViewModel(
         is AuthNetworkException.YandexTokenInvalid -> "Яндекс не подтвердил вход. Попробуйте ещё раз"
         is AuthNetworkException.UserWithThisEmailAlreadyExists ->
             "Эта почта уже привязана к другому Яндекс-аккаунту"
-
         is AuthNetworkException.ServerError -> "Сервер временно недоступен. Попробуйте позже"
         else -> ex.message ?: "Неизвестная ошибка"
     }

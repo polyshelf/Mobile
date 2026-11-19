@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SplashViewModel(
-    private val checkAuthUseCase: CheckAuthUseCase,
+    private val checkAuthUseCase: CheckAuthUseCase
 ) : ViewModel() {
 
     val authState: StateFlow<SplashAuthState>
@@ -29,12 +29,16 @@ class SplashViewModel(
                 Timber.d("SplashViewModel: checkAuth SUCCESS -> SplashAuthState.Authenticated")
                 authState.update { SplashAuthState.Authenticated }
             }.onFailure { ex ->
-                Timber.e(
-                    ex,
-                    "SplashViewModel: checkAuth FAILED -> SplashAuthState.Unauthenticated. Reason: ${ex.message}"
-                )
+                Timber.e(ex, "SplashViewModel: checkAuth FAILED -> SplashAuthState.Unauthenticated. Reason: ${ex.message}")
                 authState.update { SplashAuthState.Unauthenticated }
             }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            Timber.d("SplashViewModel: logout() called")
+            checkAuthUseCase.logout()
         }
     }
 }
