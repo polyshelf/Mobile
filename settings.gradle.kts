@@ -1,4 +1,4 @@
-rootProject.name = "PolyFood"
+rootProject.name = "PolyShelf"
 
 pluginManagement {
     repositories {

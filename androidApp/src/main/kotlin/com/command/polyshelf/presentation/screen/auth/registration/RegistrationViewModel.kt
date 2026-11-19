@@ -78,6 +78,7 @@ class RegistrationViewModel(
                 val errorMessage = when (ex) {
                     is AuthNetworkException.EmailBoundToYandex ->
                         "Этот email привязан к Яндексу. Войдите через Яндекс"
+
                     is AuthNetworkException.UserWithThisEmailAlreadyExists -> "Email уже зарегистрирован"
                     is AuthNetworkException.InvalidEmailOrPasswordFormat -> "Неверный формат почты или пароля"
                     is AuthUIException.InvalidPassword -> "Пароль должен быть длиннее 6 символов"

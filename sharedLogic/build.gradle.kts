@@ -16,23 +16,23 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     android {
-       namespace = "com.command.polyshelf.sharedLogic"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+        namespace = "com.command.polyshelf.sharedLogic"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
-    
+
     sourceSets {
         commonMain.dependencies {
             // DI
@@ -44,6 +44,7 @@ kotlin {
             // Работа с сетью
             implementation(libs.ktor.client.engine.defaults)
             implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.serialization.json)
         }
