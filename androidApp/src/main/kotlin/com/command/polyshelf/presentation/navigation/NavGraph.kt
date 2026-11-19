@@ -8,10 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.command.polyshelf.presentation.screen.auth.login.LoginScreen
 import com.command.polyshelf.presentation.screen.auth.registration.RegistrationScreen
-import com.command.polyshelf.presentation.screen.changepassword.ChangePasswordScreen
-import com.command.polyshelf.presentation.screen.main.MainScreenContainer
-import com.command.polyshelf.presentation.screen.main.MainViewModel
+import com.command.polyshelf.presentation.screen.home.HomeScreen
 import com.command.polyshelf.presentation.screen.splash.SplashScreen
+import com.command.polyshelf.presentation.screen.splash.SplashViewModel
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,16 +25,9 @@ sealed interface Screen {
     data object Registration : Screen
 
     @Serializable
-    data object Main : Screen
-
-    @Serializable
-    data object ChangePassword : Screen
+    data object Home : Screen
 }
 
-/**
- * popUpTo - удаляет пройденные экраны (например Splash или Login) из стека навигации,
- * чтобы при нажатии физической кнопки "Назад" пользователь не возвращался на экран входа/сплеша.
- */
 @Composable
 fun PolyShelfNavGraph(
     modifier: Modifier = Modifier,
@@ -49,7 +41,7 @@ fun PolyShelfNavGraph(
         composable<Screen.Splash> {
             SplashScreen(
                 onAuthenticated = {
-                    navController.navigate(Screen.Main) {
+                    navController.navigate(Screen.Home) {
                         popUpTo<Screen.Splash> { inclusive = true }
                     }
                 },
@@ -67,7 +59,7 @@ fun PolyShelfNavGraph(
                     navController.navigate(Screen.Registration)
                 },
                 onLoginSuccess = {
-                    navController.navigate(Screen.Main) {
+                    navController.navigate(Screen.Home) {
                         popUpTo<Screen.Login> { inclusive = true }
                     }
                 }
@@ -80,32 +72,21 @@ fun PolyShelfNavGraph(
                     navController.popBackStack()
                 },
                 onRegisterSuccess = {
-                    navController.navigate(Screen.Registration) {
+                    navController.navigate(Screen.Home) {
                         popUpTo<Screen.Registration> { inclusive = true }
                     }
                 }
             )
         }
 
-        composable<Screen.Main> {
-            val mainViewModel: MainViewModel = koinViewModel()
-            MainScreenContainer(
-                onChangePasswordClick = {
-                    navController.navigate(Screen.ChangePassword)
-                },
+        composable<Screen.Home> {
+            val splashViewModel: SplashViewModel = koinViewModel()
+            HomeScreen(
                 onLogoutClick = {
-                    mainViewModel.logout()
+                    splashViewModel.logout()
                     navController.navigate(Screen.Login) {
-                        popUpTo<Screen.Main> { inclusive = true }
+                        popUpTo<Screen.Home> { inclusive = true }
                     }
-                }
-            )
-        }
-
-        composable<Screen.ChangePassword> {
-            ChangePasswordScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
                 }
             )
         }

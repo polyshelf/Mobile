@@ -1,7 +1,6 @@
 package com.command.polyshelf.data.network.auth.api
 
 import com.command.polyshelf.data.network.auth.dto.AuthResponse
-import com.command.polyshelf.data.network.auth.dto.ChangePasswordRequest
 import com.command.polyshelf.data.network.auth.dto.RefreshTokenRequest
 import com.command.polyshelf.data.network.auth.dto.UserDto
 import com.command.polyshelf.data.network.auth.dto.YandexAuthRequest
@@ -11,5 +10,4 @@ interface AuthApi {
     suspend fun register(user: UserDto): Result<AuthResponse>
     suspend fun yandex(request: YandexAuthRequest): Result<AuthResponse>
     suspend fun refresh(request: RefreshTokenRequest): Result<AuthResponse>
-    suspend fun changePassword(request: ChangePasswordRequest): Result<Unit>
 }

@@ -16,4 +16,9 @@ class CheckAuthUseCase(
         Logger.d("CheckAuthUseCase", "Tokens found. Invoking refreshToken()...")
         return authRepository.refreshToken()
     }
+
+    suspend fun logout() {
+        Logger.d("CheckAuthUseCase", "logout() called")
+        authRepository.logout()
+    }
 }

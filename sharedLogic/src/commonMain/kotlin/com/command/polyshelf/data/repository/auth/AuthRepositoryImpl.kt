@@ -1,7 +1,6 @@
 package com.command.polyshelf.data.repository.auth
 
 import com.command.polyshelf.data.network.auth.api.AuthApi
-import com.command.polyshelf.data.network.auth.dto.ChangePasswordRequest
 import com.command.polyshelf.data.network.auth.dto.RefreshTokenRequest
 import com.command.polyshelf.data.network.auth.dto.YandexAuthRequest
 import com.command.polyshelf.data.network.auth.exception.AuthNetworkException
@@ -44,13 +43,12 @@ class AuthRepositoryImpl(
 
     override suspend fun loginWithYandex(yandexToken: String, linkPassword: String?): Result<Unit> {
         Logger.d("AuthRepositoryImpl", "loginWithYandex() started, linking=${linkPassword != null}")
-        return authApi.yandex(YandexAuthRequest(yandexToken, linkPassword))
-            .mapCatching { response ->
-                tokenStorage.saveTokens(
-                    accessToken = response.accessToken,
-                    refreshToken = response.refreshToken
-                )
-            }.onFailure { ex ->
+        return authApi.yandex(YandexAuthRequest(yandexToken, linkPassword)).mapCatching { response ->
+            tokenStorage.saveTokens(
+                accessToken = response.accessToken,
+                refreshToken = response.refreshToken
+            )
+        }.onFailure { ex ->
             Logger.e("AuthRepositoryImpl", "loginWithYandex() FAILED: ${ex.message}", ex)
         }
     }
@@ -64,10 +62,7 @@ class AuthRepositoryImpl(
 
     override suspend fun refreshToken(): Result<Unit> {
         val currentRefreshToken = tokenStorage.getRefreshToken()
-        Logger.d(
-            "AuthRepositoryImpl",
-            "refreshToken() started. currentRefreshToken is ${if (currentRefreshToken.isNullOrBlank()) "NULL/EMPTY" else "PRESENT"}"
-        )
+        Logger.d("AuthRepositoryImpl", "refreshToken() started. currentRefreshToken is ${if (currentRefreshToken.isNullOrBlank()) "NULL/EMPTY" else "PRESENT"}")
 
         if (currentRefreshToken.isNullOrBlank()) {
             Logger.e("AuthRepositoryImpl", "Cannot refresh token: refreshToken is null or blank")
@@ -85,10 +80,7 @@ class AuthRepositoryImpl(
         }.onFailure { ex ->
             Logger.e("AuthRepositoryImpl", "authApi.refresh FAILED: ${ex.message}", ex)
             if (ex is AuthNetworkException.InvalidRefreshToken) {
-                Logger.d(
-                    "AuthRepositoryImpl",
-                    "Refresh token is invalid/expired (401). Clearing stored tokens."
-                )
+                Logger.d("AuthRepositoryImpl", "Refresh token is invalid/expired (401). Clearing stored tokens.")
                 tokenStorage.clear()
             }
         }
@@ -99,20 +91,5 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         Logger.d("AuthRepositoryImpl", "logout() called -> clearing tokenStorage")
         tokenStorage.clear()
-    }
-
-    override suspend fun changePassword(
-        currentPassword: String,
-        newPassword: String
-    ): Result<Unit> {
-        Logger.d("AuthRepositoryImpl", "changePassword() started")
-        return authApi.changePassword(
-            ChangePasswordRequest(
-                currentPassword = currentPassword,
-                newPassword = newPassword
-            )
-        ).onFailure { ex ->
-            Logger.e("AuthRepositoryImpl", "changePassword() FAILED: ${ex.message}", ex)
-        }
     }
 }
