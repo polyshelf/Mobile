@@ -4,6 +4,8 @@ import android.app.Application
 import com.command.polyshelf.di.auth.sharedAuthModule
 import com.command.polyshelf.di.authModule
 import com.command.polyshelf.di.clientModule
+import com.command.polyshelf.di.product.sharedProductModule
+import com.command.polyshelf.di.productUiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -19,7 +21,13 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(clientModule, sharedAuthModule, authModule)
+            modules(
+                clientModule,
+                sharedAuthModule,
+                sharedProductModule,
+                authModule,
+                productUiModule
+            )
         }
     }
 }
